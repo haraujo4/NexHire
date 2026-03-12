@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Company {
+  id           String          @id @default(uuid())
+  name         String
+  email        String          @unique
+  passwordHash String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  profile      CompanyProfile?
+  jobs         Job[]
+}
+
+model CompanyProfile {
+  id          String   @id @default(uuid())
+  companyId   String   @unique
+  description String?
+  website     String?
+  logoUrl     String?
+  industry    String?
+  size        String?
+  address     Json?
+  socialLinks Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Candidate {
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  phone            String?
+  location         String?
+  passwordHash     String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  aianalysisCaches AIAnalysisCache[]
+  applications     Application[]
+  profile          CandidateProfile?
+}
+
+model CandidateProfile {
+  id                   String    @id @default(uuid())
+  candidateId          String    @unique
+  skills               String[]
+  experience           String
+  education            String
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  academicInfo         Json?
+  portfolioUrl         String?
+  professionalInfo     Json?
+  profileFingerprint   String?
+  socialLinks          Json?
+  address              Json?
+  birthDate            String?
+  cpf                  String?
+  gender               String?
+  phone2               String?
+  aiSummary            String?
+  aiSummaryFingerprint String?
+  aiAcademicSummary    String?
+  aiExperienceSummary  String?
+  candidate            Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id               String            @id @default(uuid())
+  companyId        String
+  title            String
+  description      String
+  requirements     String[]
+  salaryRange      String?
+  location         String?
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  isEliminatory    Boolean           @default(false)
+  customForm       Json?
+  jobFingerprint   String?
+  aianalysisCaches AIAnalysisCache[]
+  applications     Application[]
+  company          Company           @relation(fields: [companyId], references: [id])
+}
+
+model Application {
+  id                 String    @id @default(uuid())
+  candidateId        String
+  jobId              String
+  status             String    @default("applied")
+  compatibilityScore Float?
+  aiAnalysis         String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  formResponses      Json?
+  candidate          Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  job                Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model AIAnalysisCache {
+  id                 String    @id @default(uuid())
+  candidateId        String
+  jobId              String
+  profileFingerprint String
+  jobFingerprint     String
+  analysisResult     Json
+  createdAt          DateTime  @default(now())
+  candidate          Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  job                Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, jobId])
+}

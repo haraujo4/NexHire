@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const JobController_1 = require("../controllers/JobController");
+const container_1 = require("../../container");
+const router = (0, express_1.Router)();
+const jobController = new JobController_1.JobController(container_1.container.jobService);
+router.get('/jobs', jobController.list);
+router.get('/jobs/:id', jobController.getById);
+exports.default = router;

@@ -47,9 +47,15 @@ export class JobController {
     };
 
 
-    list = async (req: Request, res: Response, next: NextFunction) => {
+    list = async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {
-            const { companyId } = req.query;
+            let { companyId } = req.query;
+
+            // If it's a company request (authenticated), force filter by their own ID
+            if (req.user && req.user.role === 'company') {
+                companyId = req.user.id;
+            }
+
             const jobs = await this.jobService.getJobs(companyId as string);
             res.json(jobs);
         } catch (error) {

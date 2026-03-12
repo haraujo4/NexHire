@@ -3,7 +3,13 @@ const { PrismaPg } = require('@prisma/adapter-pg');
 const { PrismaClient } = require('@prisma/client');
 
 // Construct Connection String
-const connectionString = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}?schema=public`;
+const user = encodeURIComponent(process.env.POSTGRES_USER || 'postgres');
+const password = encodeURIComponent(process.env.POSTGRES_PASSWORD || 'postgrespw');
+const host = process.env.POSTGRES_HOST || 'db';
+const port = process.env.POSTGRES_PORT || '5432';
+const db = process.env.POSTGRES_DB || 'rhlegal';
+
+const connectionString = `postgresql://${user}:${password}@${host}:${port}/${db}?schema=public`;
 
 // Create PG Pool
 const pool = new Pool({ connectionString });

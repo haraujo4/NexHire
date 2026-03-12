@@ -140,14 +140,14 @@ export function ApplicationModal({ job, onClose, onSuccess }: ApplicationModalPr
                                                     <button
                                                         type="button"
                                                         onClick={() => setFormResponses({ ...formResponses, [field.label]: "Sim" })}
-                                                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border-2 ${formResponses[field.label] === "Sim" ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-200'}`}
+                                                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border-2 ${formResponses?.[field.label] === "Sim" ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-200'}`}
                                                     >
                                                         Sim
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => setFormResponses({ ...formResponses, [field.label]: "Não" })}
-                                                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border-2 ${formResponses[field.label] === "Não" ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-200'}`}
+                                                        className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all border-2 ${formResponses?.[field.label] === "Não" ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-200'}`}
                                                     >
                                                         Não
                                                     </button>
@@ -157,7 +157,7 @@ export function ApplicationModal({ job, onClose, onSuccess }: ApplicationModalPr
                                                     type={field.type}
                                                     placeholder="Sua resposta..."
                                                     className="h-12 rounded-xl"
-                                                    value={formResponses[field.label] || ''}
+                                                    value={formResponses?.[field.label] || ''}
                                                     onChange={(e) => setFormResponses({ ...formResponses, [field.label]: e.target.value })}
                                                 />
                                             )}

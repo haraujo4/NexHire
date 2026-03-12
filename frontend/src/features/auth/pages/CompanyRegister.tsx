@@ -18,9 +18,8 @@ export function CompanyRegister() {
         e.preventDefault()
         setLoading(true)
         try {
-            const { company, token } = await authService.companyRegister({ name, email, password });
-            useAuthStore.getState().login(company, token);
-            useAuthStore.getState().login(company, token);
+            const { user, token } = await authService.companyRegister({ name, email, password });
+            useAuthStore.getState().login(user, token);
             navigate('/company/dashboard')
         } catch (error: any) {
             console.error(error);

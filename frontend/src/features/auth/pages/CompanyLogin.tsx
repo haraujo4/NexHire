@@ -19,7 +19,6 @@ export function CompanyLogin() {
         try {
             const { user, token } = await authService.companyLogin({ email, password });
             useAuthStore.getState().login(user, token);
-            useAuthStore.getState().login(user, token);
             navigate('/company/dashboard')
         } catch (error: any) {
             console.error(error);

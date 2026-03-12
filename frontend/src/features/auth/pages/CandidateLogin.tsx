@@ -19,7 +19,6 @@ export function CandidateLogin() {
         try {
             const { user, token } = await authService.candidateLogin({ email, password });
             useAuthStore.getState().login(user, token);
-            useAuthStore.getState().login(user, token);
             navigate('/candidate/jobs')
         } catch (error: any) {
             console.error(error);

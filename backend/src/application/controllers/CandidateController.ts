@@ -16,9 +16,9 @@ export class CandidateController {
             const { name, email, password } = schema.parse(req.body);
 
             const result = await this.candidateService.register(name, email, password);
-            const { passwordHash, ...candidateWithoutPassword } = result.candidate;
+            const { passwordHash, ...candidateWithoutPassword } = result.user;
 
-            res.status(201).json({ candidate: candidateWithoutPassword, token: result.token });
+            res.status(201).json({ user: candidateWithoutPassword, token: result.token });
         } catch (error) {
             next(error);
         }
@@ -28,8 +28,8 @@ export class CandidateController {
         try {
             const { email, password } = req.body;
             const result = await this.candidateService.login(email, password);
-            const { passwordHash, ...candidateWithoutPassword } = result.candidate;
-            res.json({ user: { ...candidateWithoutPassword, role: 'candidate' }, token: result.token });
+            const { passwordHash, ...candidateWithoutPassword } = result.user;
+            res.json({ user: candidateWithoutPassword, token: result.token });
         } catch (error) {
             next(error);
         }

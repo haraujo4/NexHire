@@ -1,0 +1,4 @@
+﻿src/application/controllers/CandidateController.ts(19,74): error TS2339: Property 'candidate' does not exist on type '{ user: any; token: string; }'.
+src/application/controllers/CandidateController.ts(31,74): error TS2339: Property 'candidate' does not exist on type '{ user: any; token: string; }'.
+src/application/controllers/CompanyController.ts(19,72): error TS2339: Property 'company' does not exist on type '{ user: any; token: string; }'.
+src/application/controllers/CompanyController.ts(31,72): error TS2339: Property 'company' does not exist on type '{ user: any; token: string; }'.

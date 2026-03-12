@@ -9,7 +9,7 @@ class ApplicationRepository {
             where: { id },
             include: {
                 job: { include: { company: true } },
-                candidate: true
+                candidate: { include: { profile: true } }
             }
         });
         if (!data)
@@ -20,7 +20,7 @@ class ApplicationRepository {
         const data = await prisma_1.prisma.application.findMany({
             where: { jobId },
             include: {
-                candidate: true,
+                candidate: { include: { profile: true } },
                 job: { include: { company: true } }
             },
             orderBy: { compatibilityScore: 'desc' }

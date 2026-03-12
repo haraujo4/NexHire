@@ -7,6 +7,7 @@ const CandidateRepository_1 = require("../repositories/CandidateRepository");
 const JobRepository_1 = require("../repositories/JobRepository");
 const ApplicationRepository_1 = require("../repositories/ApplicationRepository");
 const GeminiProvider_1 = require("../providers/GeminiProvider");
+const MailProvider_1 = require("../providers/MailProvider");
 const AIAnalysisCacheRepository_1 = require("../repositories/AIAnalysisCacheRepository");
 const CVParsingService_1 = require("../services/CVParsingService");
 // Use Cases
@@ -27,6 +28,7 @@ const LoginCandidateUseCase_1 = require("../../application/usecases/candidate/Lo
 const GetCandidateProfileUseCase_1 = require("../../application/usecases/candidate/GetCandidateProfileUseCase");
 const UpdateCandidateProfileUseCase_1 = require("../../application/usecases/candidate/UpdateCandidateProfileUseCase");
 const ExtractCVDataUseCase_1 = require("../../application/usecases/candidate/ExtractCVDataUseCase");
+const SummarizeCandidateProfileUseCase_1 = require("../../application/usecases/candidate/SummarizeCandidateProfileUseCase");
 const ApplyForJobUseCase_1 = require("../../application/usecases/application/ApplyForJobUseCase");
 const GetApplicationsUseCase_1 = require("../../application/usecases/application/GetApplicationsUseCase");
 const UpdateApplicationStatusUseCase_1 = require("../../application/usecases/application/UpdateApplicationStatusUseCase");
@@ -63,9 +65,10 @@ class DIContainer {
     get applicationRepo() { return this.resolve('ApplicationRepo', 'Singleton', () => new ApplicationRepository_1.ApplicationRepository()); }
     get aiCacheRepo() { return this.resolve('AICacheRepo', 'Singleton', () => new AIAnalysisCacheRepository_1.AIAnalysisCacheRepository()); }
     get aiProvider() { return this.resolve('AIProvider', 'Singleton', () => new GeminiProvider_1.GeminiProvider()); }
+    get mailProvider() { return this.resolve('MailProvider', 'Singleton', () => new MailProvider_1.MailProvider()); }
     get cvParsingService() { return this.resolve('CVParsingService', 'Singleton', () => new CVParsingService_1.CVParsingService()); }
     // Use Cases (Transient - New instance per resolution)
-    get registerCompanyUC() { return this.resolve('RegisterCompanyUC', 'Transient', () => new RegisterCompanyUseCase_1.RegisterCompanyUseCase(this.companyRepo)); }
+    get registerCompanyUC() { return this.resolve('RegisterCompanyUC', 'Transient', () => new RegisterCompanyUseCase_1.RegisterCompanyUseCase(this.companyRepo, this.mailProvider)); }
     get loginCompanyUC() { return this.resolve('LoginCompanyUC', 'Transient', () => new LoginCompanyUseCase_1.LoginCompanyUseCase(this.companyRepo)); }
     get getCompanyStatsUC() { return this.resolve('GetCompanyStatsUC', 'Transient', () => new GetCompanyDashboardStatsUseCase_1.GetCompanyDashboardStatsUseCase()); }
     get getCompanyProfileUC() { return this.resolve('GetCompanyProfileUC', 'Transient', () => new GetCompanyProfileUseCase_1.GetCompanyProfileUseCase(this.companyRepo)); }
@@ -77,14 +80,15 @@ class DIContainer {
     get deleteJobUC() { return this.resolve('DeleteJobUC', 'Transient', () => new DeleteJobUseCase_1.DeleteJobUseCase(this.jobRepo)); }
     get closeJobUC() { return this.resolve('CloseJobUC', 'Transient', () => new CloseJobUseCase_1.CloseJobUseCase(this.jobRepo)); }
     get assistJobUC() { return this.resolve('AssistJobUC', 'Transient', () => new AssistJobCreationUseCase_1.AssistJobCreationUseCase(this.aiProvider)); }
-    get registerCandidateUC() { return this.resolve('RegisterCandidateUC', 'Transient', () => new RegisterCandidateUseCase_1.RegisterCandidateUseCase(this.candidateRepo)); }
+    get registerCandidateUC() { return this.resolve('RegisterCandidateUC', 'Transient', () => new RegisterCandidateUseCase_1.RegisterCandidateUseCase(this.candidateRepo, this.mailProvider)); }
     get loginCandidateUC() { return this.resolve('LoginCandidateUC', 'Transient', () => new LoginCandidateUseCase_1.LoginCandidateUseCase(this.candidateRepo)); }
     get getCandidateProfileUC() { return this.resolve('GetCandidateProfileUC', 'Transient', () => new GetCandidateProfileUseCase_1.GetCandidateProfileUseCase(this.candidateRepo)); }
     get updateCandidateProfileUC() { return this.resolve('UpdateCandidateProfileUseCase', 'Transient', () => new UpdateCandidateProfileUseCase_1.UpdateCandidateProfileUseCase(this.candidateRepo, this.aiProvider)); }
     get extractCVDataUC() { return this.resolve('ExtractCVDataUC', 'Transient', () => new ExtractCVDataUseCase_1.ExtractCVDataUseCase(this.aiProvider, this.cvParsingService)); }
-    get applyUC() { return this.resolve('ApplyUC', 'Transient', () => new ApplyForJobUseCase_1.ApplyForJobUseCase(this.applicationRepo)); }
+    get summarizeCandidateProfileUC() { return this.resolve('SummarizeCandidateProfileUC', 'Transient', () => new SummarizeCandidateProfileUseCase_1.SummarizeCandidateProfileUseCase(this.candidateRepo, this.aiProvider)); }
+    get applyUC() { return this.resolve('ApplyUC', 'Transient', () => new ApplyForJobUseCase_1.ApplyForJobUseCase(this.applicationRepo, this.jobRepo, this.candidateRepo, this.mailProvider)); }
     get getAppsUC() { return this.resolve('GetAppsUC', 'Transient', () => new GetApplicationsUseCase_1.GetApplicationsUseCase(this.applicationRepo, this.jobRepo)); }
-    get updateAppStatusUC() { return this.resolve('UpdateAppStatusUC', 'Transient', () => new UpdateApplicationStatusUseCase_1.UpdateApplicationStatusUseCase(this.applicationRepo)); }
+    get updateAppStatusUC() { return this.resolve('UpdateAppStatusUC', 'Transient', () => new UpdateApplicationStatusUseCase_1.UpdateApplicationStatusUseCase(this.applicationRepo, this.jobRepo, this.candidateRepo, this.mailProvider)); }
     get evaluateAIUC() { return this.resolve('EvaluateAIUC', 'Transient', () => new EvaluateCompatibilityUseCase_1.EvaluateCompatibilityUseCase(this.applicationRepo, this.jobRepo, this.candidateRepo, this.aiProvider)); }
     get simulateAIUC() { return this.resolve('SimulateAIUC', 'Transient', () => new SimulateCompatibilityUseCase_1.SimulateCompatibilityUseCase(this.jobRepo, this.candidateRepo, this.aiProvider, this.aiCacheRepo)); }
     // Services (Scoped - One instance per HTTP Request)
@@ -92,7 +96,7 @@ class DIContainer {
         return this.resolve('CompanyService', 'Scoped', () => new CompanyService_1.CompanyService(this.registerCompanyUC, this.loginCompanyUC, this.getCompanyStatsUC, this.getCompanyProfileUC, this.updateCompanyProfileUC));
     }
     get candidateService() {
-        return this.resolve('CandidateService', 'Scoped', () => new CandidateService_1.CandidateService(this.registerCandidateUC, this.loginCandidateUC, this.getCandidateProfileUC, this.updateCandidateProfileUC, this.extractCVDataUC));
+        return this.resolve('CandidateService', 'Scoped', () => new CandidateService_1.CandidateService(this.registerCandidateUC, this.loginCandidateUC, this.getCandidateProfileUC, this.updateCandidateProfileUC, this.extractCVDataUC, this.summarizeCandidateProfileUC));
     }
     get jobService() {
         return this.resolve('JobService', 'Scoped', () => new JobService_1.JobService(this.createJobUC, this.getJobsUC, this.getJobByIdUC, this.updateJobUC, this.deleteJobUC, this.closeJobUC, this.assistJobUC));

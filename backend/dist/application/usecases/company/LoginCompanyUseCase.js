@@ -12,18 +12,31 @@ class LoginCompanyUseCase {
     }
     async execute(email, passwordPlain) {
         console.log(`[Login Debug] Tentativa de login para: ${email}`);
-        const company = await this.companyRepo.findByEmail(email);
-        if (!company) {
-            console.log(`[Login Debug] Empresa não encontrada no banco: ${email}`);
-            throw new Error("Credenciais inválidas");
+        try {
+            const company = await this.companyRepo.findByEmail(email);
+            if (!company) {
+                console.log(`[Login Debug] Empresa não encontrada no banco: ${email}`);
+                throw new Error("Credenciais inválidas");
+            }
+            console.log(`[Login Debug] Empresa encontrada: ${company.id}. Comparando senhas...`);
+            if (!company.passwordHash) {
+                console.error(`[Login Debug] ERRO: hash de senha ausente para empresa ${email}`);
+                throw new Error("Erro na configuração da conta. Por favor, contate o suporte.");
+            }
+            const isValid = await bcrypt_1.default.compare(passwordPlain, company.passwordHash);
+            if (!isValid) {
+                console.log(`[Login Debug] Senha incorreta para: ${email}`);
+                throw new Error("Credenciais inválidas");
+            }
+            console.log(`[Login Debug] Login bem-sucedido: ${email}`);
+            const token = this.generateToken(company.id);
+            const user = { ...company, role: 'company' };
+            return { user, token };
         }
-        const isValid = await bcrypt_1.default.compare(passwordPlain, company.passwordHash);
-        if (!isValid) {
-            console.log(`[Login Debug] Senha incorreta para: ${email}`);
-            throw new Error("Credenciais inválidas");
+        catch (error) {
+            console.error(`[Login Debug] Erro durante o processo de login:`, error);
+            throw error;
         }
-        const token = this.generateToken(company.id);
-        return { company, token };
     }
     generateToken(id) {
         const secret = process.env.JWT_SECRET || 'secret';

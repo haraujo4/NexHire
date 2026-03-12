@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CandidateService = void 0;
 class CandidateService {
-    constructor(registerUC, loginUC, getProfileUC, updateProfileUC, extractCVUC) {
+    constructor(registerUC, loginUC, getProfileUC, updateProfileUC, extractCVUC, summarizeProfileUC) {
         this.registerUC = registerUC;
         this.loginUC = loginUC;
         this.getProfileUC = getProfileUC;
         this.updateProfileUC = updateProfileUC;
         this.extractCVUC = extractCVUC;
+        this.summarizeProfileUC = summarizeProfileUC;
     }
     async register(name, email, passwordPlain) {
         return this.registerUC.execute(name, email, passwordPlain);
@@ -23,6 +24,9 @@ class CandidateService {
     }
     async updateProfile(candidateId, profileData) {
         return this.updateProfileUC.execute(candidateId, profileData);
+    }
+    async summarizeProfile(candidateId) {
+        return this.summarizeProfileUC.execute(candidateId);
     }
     async extractCVData(fileBuffer, mimetype) {
         return this.extractCVUC.execute(fileBuffer, mimetype);

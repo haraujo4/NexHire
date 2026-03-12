@@ -94,6 +94,16 @@ class CandidateController {
                 next(error);
             }
         };
+        this.summarizeProfile = async (req, res, next) => {
+            try {
+                const { id } = req.params;
+                const profile = await this.candidateService.summarizeProfile(id);
+                res.json(profile);
+            }
+            catch (error) {
+                next(error);
+            }
+        };
     }
 }
 exports.CandidateController = CandidateController;

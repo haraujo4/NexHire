@@ -16,9 +16,9 @@ export class CompanyController {
 
             const result = await this.companyService.register(name, email, password);
             // Remove password hash from response
-            const { passwordHash, ...companyWithoutPassword } = result.company;
+            const { passwordHash, ...companyWithoutPassword } = result.user;
 
-            res.status(201).json({ company: companyWithoutPassword, token: result.token });
+            res.status(201).json({ user: companyWithoutPassword, token: result.token });
         } catch (error) {
             next(error);
         }
@@ -28,8 +28,8 @@ export class CompanyController {
         try {
             const { email, password } = req.body;
             const result = await this.companyService.login(email, password);
-            const { passwordHash, ...companyWithoutPassword } = result.company;
-            res.json({ user: { ...companyWithoutPassword, role: 'company' }, token: result.token });
+            const { passwordHash, ...companyWithoutPassword } = result.user;
+            res.json({ user: companyWithoutPassword, token: result.token });
         } catch (error) {
             next(error);
         }

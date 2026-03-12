@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 export class LoginCandidateUseCase {
     constructor(private readonly candidateRepo: ICandidateRepository) { }
 
-    async execute(email: string, passwordPlain: string): Promise<{ candidate: Candidate, token: string }> {
+    async execute(email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         const candidate = await this.candidateRepo.findByEmail(email);
         if (!candidate) {
             throw new Error("Credenciais inválidas");
@@ -18,7 +18,8 @@ export class LoginCandidateUseCase {
         }
 
         const token = this.generateToken(candidate.id);
-        return { candidate, token };
+        const user = { ...candidate, role: 'candidate' };
+        return { user, token };
     }
 
     private generateToken(id: string): string {

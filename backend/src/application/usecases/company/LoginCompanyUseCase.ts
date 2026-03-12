@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 export class LoginCompanyUseCase {
     constructor(private readonly companyRepo: ICompanyRepository) { }
 
-    async execute(email: string, passwordPlain: string): Promise<{ company: Company, token: string }> {
+    async execute(email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         console.log(`[Login Debug] Tentativa de login para: ${email}`);
         try {
             const company = await this.companyRepo.findByEmail(email);
@@ -31,7 +31,8 @@ export class LoginCompanyUseCase {
 
             console.log(`[Login Debug] Login bem-sucedido: ${email}`);
             const token = this.generateToken(company.id);
-            return { company, token };
+            const user = { ...company, role: 'company' };
+            return { user, token };
         } catch (error: any) {
             console.error(`[Login Debug] Erro durante o processo de login:`, error);
             throw error;

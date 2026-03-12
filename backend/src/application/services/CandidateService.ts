@@ -18,11 +18,11 @@ export class CandidateService implements ICandidateService {
         private readonly summarizeProfileUC: SummarizeCandidateProfileUseCase
     ) { }
 
-    async register(name: string, email: string, passwordPlain: string): Promise<{ candidate: Candidate, token: string }> {
+    async register(name: string, email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         return this.registerUC.execute(name, email, passwordPlain);
     }
 
-    async login(email: string, passwordPlain: string): Promise<{ candidate: Candidate, token: string }> {
+    async login(email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         return this.loginUC.execute(email, passwordPlain);
     }
 

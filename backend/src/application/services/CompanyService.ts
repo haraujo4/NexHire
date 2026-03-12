@@ -15,11 +15,11 @@ export class CompanyService implements ICompanyService {
         private readonly updateProfileUC: UpdateCompanyProfileUseCase
     ) { }
 
-    async register(name: string, email: string, passwordPlain: string): Promise<{ company: Company, token: string }> {
+    async register(name: string, email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         return this.registerUC.execute(name, email, passwordPlain);
     }
 
-    async login(email: string, passwordPlain: string): Promise<{ company: Company, token: string }> {
+    async login(email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         return this.loginUC.execute(email, passwordPlain);
     }
 

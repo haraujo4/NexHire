@@ -18,9 +18,8 @@ export function CandidateRegister() {
         e.preventDefault()
         setLoading(true)
         try {
-            const { candidate, token } = await authService.candidateRegister({ name, email, password });
-            useAuthStore.getState().login(candidate, token);
-            useAuthStore.getState().login(candidate, token);
+            const { user, token } = await authService.candidateRegister({ name, email, password });
+            useAuthStore.getState().login(user, token);
             navigate('/candidate/profile')
         } catch (error: any) {
             console.error(error);

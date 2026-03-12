@@ -20,7 +20,8 @@ class LoginCandidateUseCase {
             throw new Error("Credenciais inválidas");
         }
         const token = this.generateToken(candidate.id);
-        return { candidate, token };
+        const user = { ...candidate, role: 'candidate' };
+        return { user, token };
     }
     generateToken(id) {
         const secret = process.env.JWT_SECRET || 'secret';

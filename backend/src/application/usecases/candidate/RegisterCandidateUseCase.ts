@@ -2,11 +2,16 @@ import { ICandidateRepository } from "../../../core/interfaces/ICandidateReposit
 import { Candidate } from "../../../core/entities/Candidate";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { MailProvider } from "../../../infrastructure/providers/MailProvider";
+import { MailTemplates } from "../../../infrastructure/providers/MailTemplates";
 
 export class RegisterCandidateUseCase {
-    constructor(private readonly candidateRepo: ICandidateRepository) { }
+    constructor(
+        private readonly candidateRepo: ICandidateRepository,
+        private readonly mailProvider: MailProvider
+    ) { }
 
-    async execute(name: string, email: string, passwordPlain: string): Promise<{ candidate: Candidate, token: string }> {
+    async execute(name: string, email: string, passwordPlain: string): Promise<{ user: any, token: string }> {
         const existing = await this.candidateRepo.findByEmail(email);
         if (existing) {
             throw new Error("Email já está em uso");
@@ -16,7 +21,15 @@ export class RegisterCandidateUseCase {
         const candidate = await this.candidateRepo.create({ name, email, passwordHash, phone: null, location: null });
 
         const token = this.generateToken(candidate.id);
-        return { candidate, token };
+
+        this.mailProvider.sendMail({
+            to: candidate.email,
+            subject: "Bem-vindo ao NexHire!",
+            html: MailTemplates.welcomeCandidate(candidate.name)
+        });
+
+        const user = { ...candidate, role: 'candidate' };
+        return { user, token };
     }
 
     private generateToken(id: string): string {

@@ -4,6 +4,7 @@ import { CandidateRepository } from "../repositories/CandidateRepository";
 import { JobRepository } from "../repositories/JobRepository";
 import { ApplicationRepository } from "../repositories/ApplicationRepository";
 import { GeminiProvider } from "../providers/GeminiProvider";
+import { MailProvider } from "../providers/MailProvider";
 import { AIAnalysisCacheRepository } from "../repositories/AIAnalysisCacheRepository";
 import { CVParsingService } from "../services/CVParsingService";
 
@@ -68,10 +69,11 @@ export class DIContainer {
     private get applicationRepo() { return this.resolve('ApplicationRepo', 'Singleton', () => new ApplicationRepository()); }
     private get aiCacheRepo() { return this.resolve('AICacheRepo', 'Singleton', () => new AIAnalysisCacheRepository()); }
     private get aiProvider() { return this.resolve('AIProvider', 'Singleton', () => new GeminiProvider()); }
+    private get mailProvider() { return this.resolve('MailProvider', 'Singleton', () => new MailProvider()); }
     private get cvParsingService() { return this.resolve('CVParsingService', 'Singleton', () => new CVParsingService()); }
 
     // Use Cases (Transient - New instance per resolution)
-    private get registerCompanyUC() { return this.resolve('RegisterCompanyUC', 'Transient', () => new RegisterCompanyUseCase(this.companyRepo)); }
+    private get registerCompanyUC() { return this.resolve('RegisterCompanyUC', 'Transient', () => new RegisterCompanyUseCase(this.companyRepo, this.mailProvider)); }
     private get loginCompanyUC() { return this.resolve('LoginCompanyUC', 'Transient', () => new LoginCompanyUseCase(this.companyRepo)); }
     private get getCompanyStatsUC() { return this.resolve('GetCompanyStatsUC', 'Transient', () => new GetCompanyDashboardStatsUseCase()); }
     private get getCompanyProfileUC() { return this.resolve('GetCompanyProfileUC', 'Transient', () => new GetCompanyProfileUseCase(this.companyRepo)); }
@@ -85,16 +87,16 @@ export class DIContainer {
     private get closeJobUC() { return this.resolve('CloseJobUC', 'Transient', () => new CloseJobUseCase(this.jobRepo)); }
     private get assistJobUC() { return this.resolve('AssistJobUC', 'Transient', () => new AssistJobCreationUseCase(this.aiProvider)); }
 
-    private get registerCandidateUC() { return this.resolve('RegisterCandidateUC', 'Transient', () => new RegisterCandidateUseCase(this.candidateRepo)); }
+    private get registerCandidateUC() { return this.resolve('RegisterCandidateUC', 'Transient', () => new RegisterCandidateUseCase(this.candidateRepo, this.mailProvider)); }
     private get loginCandidateUC() { return this.resolve('LoginCandidateUC', 'Transient', () => new LoginCandidateUseCase(this.candidateRepo)); }
     private get getCandidateProfileUC() { return this.resolve('GetCandidateProfileUC', 'Transient', () => new GetCandidateProfileUseCase(this.candidateRepo)); }
     private get updateCandidateProfileUC() { return this.resolve('UpdateCandidateProfileUseCase', 'Transient', () => new UpdateCandidateProfileUseCase(this.candidateRepo, this.aiProvider)); }
     private get extractCVDataUC() { return this.resolve('ExtractCVDataUC', 'Transient', () => new ExtractCVDataUseCase(this.aiProvider, this.cvParsingService)); }
     private get summarizeCandidateProfileUC() { return this.resolve('SummarizeCandidateProfileUC', 'Transient', () => new SummarizeCandidateProfileUseCase(this.candidateRepo, this.aiProvider)); }
 
-    private get applyUC() { return this.resolve('ApplyUC', 'Transient', () => new ApplyForJobUseCase(this.applicationRepo)); }
+    private get applyUC() { return this.resolve('ApplyUC', 'Transient', () => new ApplyForJobUseCase(this.applicationRepo, this.jobRepo, this.candidateRepo, this.mailProvider)); }
     private get getAppsUC() { return this.resolve('GetAppsUC', 'Transient', () => new GetApplicationsUseCase(this.applicationRepo, this.jobRepo)); }
-    private get updateAppStatusUC() { return this.resolve('UpdateAppStatusUC', 'Transient', () => new UpdateApplicationStatusUseCase(this.applicationRepo)); }
+    private get updateAppStatusUC() { return this.resolve('UpdateAppStatusUC', 'Transient', () => new UpdateApplicationStatusUseCase(this.applicationRepo, this.jobRepo, this.candidateRepo, this.mailProvider)); }
     private get evaluateAIUC() { return this.resolve('EvaluateAIUC', 'Transient', () => new EvaluateCompatibilityUseCase(this.applicationRepo, this.jobRepo, this.candidateRepo, this.aiProvider)); }
     private get simulateAIUC() { return this.resolve('SimulateAIUC', 'Transient', () => new SimulateCompatibilityUseCase(this.jobRepo, this.candidateRepo, this.aiProvider, this.aiCacheRepo)); }
 

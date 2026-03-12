@@ -25,6 +25,7 @@ router.patch('/applications/:id/status', (req, res, next) => req.container.appli
 router.post('/applications/:id/evaluate', (req, res, next) => req.container.applicationController.evaluate(req, res, next));
 // Candidates
 router.get('/candidates/:id/profile', (req, res, next) => req.container.candidateController.getCandidateProfile(req, res, next));
+router.post('/candidates/:id/summarize', (req, res, next) => req.container.candidateController.summarizeProfile(req, res, next));
 // Profile
 router.get('/profile', (req, res, next) => req.container.companyController.getProfile(req, res, next));
 router.put('/profile', (req, res, next) => req.container.companyController.updateProfile(req, res, next));

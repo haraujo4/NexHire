@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Button } from '../components/ui/Button'
+import { Button } from '../shared/components/ui/Button'
 import { AlertTriangle } from 'lucide-react'
 
 export function ErrorPage() {
